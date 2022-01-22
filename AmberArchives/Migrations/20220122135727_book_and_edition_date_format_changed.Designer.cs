@@ -4,14 +4,16 @@ using AmberArchives.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmberArchives.Migrations
 {
     [DbContext(typeof(AmberArchivesDbContext))]
-    partial class AmberArchivesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220122135727_book_and_edition_date_format_changed")]
+    partial class book_and_edition_date_format_changed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,8 +62,8 @@ namespace AmberArchives.Migrations
 
                     b.Property<string>("OriginalTitle")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
@@ -91,8 +93,8 @@ namespace AmberArchives.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 

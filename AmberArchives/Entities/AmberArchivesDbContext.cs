@@ -17,23 +17,22 @@ namespace AmberArchives.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
             modelBuilder.Entity<Book>()
-                .Property(r => r.OriginalTitle)
+                .Property(b => b.OriginalTitle)
                 .IsRequired()
-                .HasMaxLength(25);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Edition>()
-                .Property(r => r.Title)
+                .Property(e => e.Title)
                 .IsRequired()
-                .HasMaxLength(25);
+                .HasMaxLength(50);
 
             modelBuilder.Entity<Author>()
-                .Property(r => r.FirstName)
+                .Property(a => a.FirstName)
                 .IsRequired();
 
             modelBuilder.Entity<Author>()
-                .Property(r => r.LastName)
+                .Property(a => a.LastName)
                 .IsRequired();
-
         }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
