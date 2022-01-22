@@ -11,29 +11,55 @@ namespace AmberArchives.Controllers
 	[Route("[controller]")]
 	public class WeatherForecastController : ControllerBase
 	{
-		private static readonly string[] Summaries = new[]
-		{
-			"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-		};
-
+		private readonly IWeatherForecastService _service;
 		private readonly ILogger<WeatherForecastController> _logger;
 
-		public WeatherForecastController(ILogger<WeatherForecastController> logger)
+		public WeatherForecastController(ILogger<WeatherForecastController> logger, IWeatherForecastService service)
 		{
 			_logger = logger;
+			_service = service;
 		}
 
 		[HttpGet]
 		public IEnumerable<WeatherForecast> Get()
 		{
-			var rng = new Random();
-			return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+			var result = _service.Get();
+			return result;
+		}
+
+		//[HttpGet]
+		//[Route("currentDay")]
+		[HttpGet("currentDay/{max}")]
+		public IEnumerable<WeatherForecast> Get2([FromQuery]int take, [FromRoute]int max)
+		{
+			var result = _service.Get();
+			return result;
+		}
+
+		[HttpPost]
+		public ActionResult<string> Hello([FromBody]string name)
+		{
+			// HttpContext.Response.StatusCode = 401;			
+			// return $"Hello {name}";
+
+			// return StatusCode(401, $"Hello {name}");
+			return NotFound($"Hello {name}");
+		}
+
+		[HttpPost]
+		[Route("generate")]
+		public ActionResult<IEnumerable<WeatherForecast>> GetSpecific([FromBody]SpecificWeatherRequest request, 
+			[FromQuery]int count)
+		{	
+			if (count > 0 && request.minTemp < request.maxTemp)
 			{
-				Date = DateTime.Now.AddDays(index),
-				TemperatureC = rng.Next(-20, 55),
-				Summary = Summaries[rng.Next(Summaries.Length)]
-			})
-			.ToArray();
+				var result = _service.GetSpecific(count, request.minTemp, request.maxTemp);
+				return Ok(result);
+			}
+			else
+			{
+				return BadRequest();
+			}
 		}
 	}
 }
