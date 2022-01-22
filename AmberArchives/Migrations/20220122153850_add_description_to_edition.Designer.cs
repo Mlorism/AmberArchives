@@ -4,14 +4,16 @@ using AmberArchives.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmberArchives.Migrations
 {
     [DbContext(typeof(AmberArchivesDbContext))]
-    partial class AmberArchivesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220122153850_add_description_to_edition")]
+    partial class add_description_to_edition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -32,6 +32,7 @@ namespace AmberArchives
 			
 			services.AddControllers();
 			services.AddDbContext<AmberArchivesDbContext>();
+			services.AddAutoMapper(this.GetType().Assembly);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
