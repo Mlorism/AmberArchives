@@ -1,4 +1,5 @@
 using AmberArchives.Controllers;
+using AmberArchives.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,10 +27,11 @@ namespace AmberArchives
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+			// services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 			// services.AddSingleton<>();
-		
+			
 			services.AddControllers();
+			services.AddDbContext<AmberArchivesDbContext>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
