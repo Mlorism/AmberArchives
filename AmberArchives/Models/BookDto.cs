@@ -11,7 +11,7 @@ namespace AmberArchives.Models
     {
 		public int Id { get; set; }		
 		public string OriginalTitle { get; set; }
-		public DateTime OriginalReleaseDate { get; set; }
+		public DateTime? OriginalReleaseDate { get; set; }
 		public float AverageRating { get; set; }
 		public List<EditionDto> Editions { get; set; }
 		public AuthorDto Author { get; set; }

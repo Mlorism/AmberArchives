@@ -13,7 +13,7 @@ namespace AmberArchives.Entities
 		public string OriginalTitle { get; set; }
 		public int AuthorId { get; set; }
 		[Column(TypeName = "date")]
-		public DateTime OriginalReleaseDate { get; set; }		
+		public DateTime? OriginalReleaseDate { get; set; }		
 		public float AverageRating { get; set; }
 		public virtual Author Author { get; set; }
 		public virtual List<Edition> Editions { get; set; }

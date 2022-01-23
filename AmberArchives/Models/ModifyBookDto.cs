@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AmberArchives.Models
 {
-    public class CreateBookDto
+    public class ModifyBookDto
     {
         [Required]
+        [Range(1, double.PositiveInfinity)]
+        public int Id { get; set; }
         [MaxLength(50)]
         public string OriginalTitle { get; set; }
-        [Required]
         [Range(1, double.PositiveInfinity)]
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
+        [Column(TypeName = "date")]
         public DateTime? OriginalReleaseDate { get; set; }
     }
 }

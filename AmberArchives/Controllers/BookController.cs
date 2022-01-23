@@ -1,5 +1,6 @@
 ﻿using AmberArchives.Entities;
 using AmberArchives.Models;
+using AmberArchives.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,57 +15,100 @@ namespace AmberArchives.Controllers
 	[Route("api/book")]
 	public class BookController : ControllerBase
 	{
+		private readonly IBookService _bookService;
 		private readonly AmberArchivesDbContext _dbContext;
-		private readonly IMapper _mapper;
 
-		public BookController(AmberArchivesDbContext dbContext, IMapper mapper)
+		public BookController(IBookService bookService, AmberArchivesDbContext dbContext)
 		{
+			_bookService = bookService;
 			_dbContext = dbContext;
-			_mapper = mapper;
 
 		}
 
 		[HttpGet]
 		public ActionResult<IEnumerable<BookDto>> GetAll()
 		{
-			var books = _dbContext
-				.Books
-				.Include(b => b.Author)
-				.Include(b => b.Editions)
-				.ToList();
-			var booksDto = _mapper.Map<List<BookDto>>(books);
+			var booksDtos = _bookService.Get();
 
-			return Ok(booksDto);
-		}
+			return Ok(booksDtos);
+		} // GetAll()
 
 		[HttpGet("{id}")]
 		public ActionResult<BookDto> Get([FromRoute] int id)
 		{
-			var book = _dbContext
-				.Books
-				.Include(b => b.Author)
-				.Include(b => b.Editions)
-				.FirstOrDefault(b => b.Id == id);
+			if (id < 1)
+			{
+				return BadRequest(ControllerHelper.Messages.idToSmall);
+			}
+			var book = _bookService.GetBook(id);
 
 			if (book is null)
 			{
 				return NotFound();
 			}
-
-			var bookDto = _mapper.Map<BookDto>(book);
-			return Ok(bookDto);
-		}
+			
+			return Ok(book);
+		} // Get()
 
 		[HttpPost]
 		public ActionResult CreateBook([FromBody] CreateBookDto dto)
 		{
-			var book = _mapper.Map<Book>(dto);
-			_dbContext.Books.Add(book);
-			_dbContext.SaveChanges();
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-			return Created($"api/book/{book.Id}", null);
-		}
+			else if (ControllerHelper.BookDuplicate(_dbContext.Books, dto))
+			{
+				return BadRequest(ControllerHelper.Messages.bookDuplicate);
+			}
+
+			else if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
+			{
+				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
+			}
+
+			var id = _bookService.Add(dto);
+
+			return Created($"api/book/{id}", null);
+		} // CreateBook()
+
+		[HttpDelete("{id}")]
+		public ActionResult Delete([FromRoute] int id)
+		{
+			var result = _bookService.Delete(id);
+
+			if (result == false)
+			{
+				return NotFound();
+			}
+
+			return Ok(id);
+		} // Delete()
+
+		[HttpPut]
+		public ActionResult Modify([FromBody] ModifyBookDto dto)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}			
+
+			else if (!_dbContext.Books.Any(b => b.Id == dto.Id))
+			{
+				return NotFound($"Book {ControllerHelper.Messages.idDontExist}");
+			}
+
+			else if (!(dto.AuthorId is null) && !_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
+			{
+				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
+			}
+
+			var result = _bookService.Modify(dto);
 
 
+			return Ok(result);
+
+		} // Modify()
 	}
 }

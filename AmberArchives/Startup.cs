@@ -1,5 +1,6 @@
 using AmberArchives.Controllers;
 using AmberArchives.Entities;
+using AmberArchives.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,7 @@ namespace AmberArchives
 			services.AddControllers();
 			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddAutoMapper(this.GetType().Assembly);
+			services.AddScoped<IBookService, BookService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
