@@ -1,5 +1,6 @@
 using AmberArchives.Controllers;
 using AmberArchives.Entities;
+using AmberArchives.Middleware;
 using AmberArchives.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +36,7 @@ namespace AmberArchives
 			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddAutoMapper(this.GetType().Assembly);
 			services.AddScoped<IBookService, BookService>();
+			services.AddScoped<ErrorHandlingMiddleware>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +46,7 @@ namespace AmberArchives
 			{
 				app.UseDeveloperExceptionPage();
 			}
-
+			app.UseMiddleware<ErrorHandlingMiddleware>();
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
@@ -52,6 +54,7 @@ namespace AmberArchives
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
+
 			});
 		}
 	}
