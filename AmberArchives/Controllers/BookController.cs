@@ -87,7 +87,7 @@ namespace AmberArchives.Controllers
 		} // Delete()
 
 		[HttpPut]
-		public ActionResult Modify([FromBody] ModifyBookDto dto)
+		public ActionResult Update([FromBody] ModifyBookDto dto)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -96,6 +96,7 @@ namespace AmberArchives.Controllers
 
 			else if (!_dbContext.Books.Any(b => b.Id == dto.Id))
 			{
+				
 				return NotFound($"Book {ControllerHelper.Messages.idDontExist}");
 			}
 
@@ -104,11 +105,14 @@ namespace AmberArchives.Controllers
 				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
 			}
 
-			var result = _bookService.Modify(dto);
+			var result = _bookService.Update(dto);
 
+			if (result)
+			{
+				return Ok(result);
+			}
 
-			return Ok(result);
-
-		} // Modify()
+			else return BadRequest();
+		} // Update()
 	}
 }

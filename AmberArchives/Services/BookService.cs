@@ -2,6 +2,7 @@
 using AmberArchives.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,12 @@ namespace AmberArchives.Services
     {
 		private readonly AmberArchivesDbContext _dbContext;
 		private readonly IMapper _mapper;
-		public BookService(AmberArchivesDbContext dbContext, IMapper mapper)
+		private readonly ILogger _logger;
+		public BookService(AmberArchivesDbContext dbContext, IMapper mapper, ILogger<BookService> logger)
 		{
 			_dbContext = dbContext;
 			_mapper = mapper;
+			_logger = logger;
 		}
 
         public BookDto GetBook(int id)
@@ -58,24 +61,36 @@ namespace AmberArchives.Services
 
 		public bool Delete(int id)
 		{
+			_logger.LogWarning($"Book with id {id} DELETE action invoked");
+
 			var book = _dbContext
 				.Books
 				.FirstOrDefault(b => b.Id == id);
 
-			if (book is null) return false;
-
+			if (book is null)
+			{
+				_logger.LogError($"Book with id {id} don't exist");
+				return false;
+			}
 			_dbContext.Books.Remove(book);
 			_dbContext.SaveChanges();
 
 			return true;
 		} // Delete()
 
-		public ModifyBookDto Modify(ModifyBookDto dto)
+		public Boolean Update(ModifyBookDto dto)
 		{
+			_logger.LogInformation($"Book with id {dto.Id} UPDATE action invoked");
+
 			var book = _dbContext
 				.Books
 				.Include(b => b.Author)
 				.FirstOrDefault(b => b.Id == dto.Id);
+
+			if (book is null)
+			{				
+				return false;
+			}
 
 			if (!(dto.OriginalReleaseDate is null))
 			{
@@ -92,11 +107,8 @@ namespace AmberArchives.Services
 				book.AuthorId = (int)dto.AuthorId;
 			}
 
-			_dbContext.SaveChanges();
-
-			var result = _mapper.Map<BookDto>(book);
-
-			return dto;
+			_dbContext.SaveChanges();			
+			return true;
 		} // Modify()
 
 

@@ -13,6 +13,6 @@ namespace AmberArchives.Services
 		BookDto GetBook(int id);
 		int Add(CreateBookDto dto);
 		bool Delete(int id);
-		ModifyBookDto Modify(ModifyBookDto dto);
+		Boolean Update(ModifyBookDto dto);
 	}
 }
