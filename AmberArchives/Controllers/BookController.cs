@@ -1,4 +1,4 @@
-﻿using AmberArchives.Entities;
+﻿ using AmberArchives.Entities;
 using AmberArchives.Models;
 using AmberArchives.Services;
 using AutoMapper;
@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 namespace AmberArchives.Controllers
 {
 	[Route("api/book")]
+	[ApiController]
 	public class BookController : ControllerBase
 	{
 		private readonly IBookService _bookService;
@@ -40,12 +41,7 @@ namespace AmberArchives.Controllers
 			{
 				return BadRequest(ControllerHelper.Messages.idToSmall);
 			}
-			var book = _bookService.GetBook(id);
-
-			if (book is null)
-			{
-				return NotFound();
-			}
+			var book = _bookService.GetBook(id);				
 			
 			return Ok(book);
 		} // Get()
@@ -53,12 +49,7 @@ namespace AmberArchives.Controllers
 		[HttpPost]
 		public ActionResult CreateBook([FromBody] CreateBookDto dto)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			else if (ControllerHelper.BookDuplicate(_dbContext.Books, dto))
+			if (ControllerHelper.BookDuplicate(_dbContext.Books, dto))
 			{
 				return BadRequest(ControllerHelper.Messages.bookDuplicate);
 			}
@@ -76,25 +67,15 @@ namespace AmberArchives.Controllers
 		[HttpDelete("{id}")]
 		public ActionResult Delete([FromRoute] int id)
 		{
-			var result = _bookService.Delete(id);
-
-			if (result == false)
-			{
-				return NotFound();
-			}
-
-			return Ok(id);
+			_bookService.Delete(id);
+						
+			return NoContent();
 		} // Delete()
 
 		[HttpPut]
 		public ActionResult Update([FromBody] ModifyBookDto dto)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}			
-
-			else if (!_dbContext.Books.Any(b => b.Id == dto.Id))
+			if (!_dbContext.Books.Any(b => b.Id == dto.Id))
 			{
 				
 				return NotFound($"Book {ControllerHelper.Messages.idDontExist}");
@@ -105,14 +86,9 @@ namespace AmberArchives.Controllers
 				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
 			}
 
-			var result = _bookService.Update(dto);
+			_bookService.Update(dto);
 
-			if (result)
-			{
-				return Ok(result);
-			}
-
-			else return BadRequest();
+			return Ok();
 		} // Update()
 	}
 }

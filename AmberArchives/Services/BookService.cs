@@ -1,4 +1,5 @@
 ﻿using AmberArchives.Entities;
+using AmberArchives.Exceptions;
 using AmberArchives.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,10 @@ namespace AmberArchives.Services
 				.Include(b => b.Editions)
 				.FirstOrDefault(b => b.Id == id);
 
-			if (book is null) return null;
+			if (book is null)
+			{
+				throw new NotFoundException("Book not found");
+			}
 
 			var result = _mapper.Map<BookDto>(book);
 			return result;
@@ -59,7 +63,7 @@ namespace AmberArchives.Services
 			return book.Id;
 		} // Add()
 
-		public bool Delete(int id)
+		public void Delete(int id)
 		{
 			_logger.LogWarning($"Book with id {id} DELETE action invoked");
 
@@ -69,16 +73,16 @@ namespace AmberArchives.Services
 
 			if (book is null)
 			{
-				_logger.LogError($"Book with id {id} don't exist");
-				return false;
+				throw new NotFoundException("Book not found");
 			}
+
 			_dbContext.Books.Remove(book);
 			_dbContext.SaveChanges();
 
-			return true;
+	
 		} // Delete()
 
-		public Boolean Update(ModifyBookDto dto)
+		public void Update(ModifyBookDto dto)
 		{
 			_logger.LogInformation($"Book with id {dto.Id} UPDATE action invoked");
 
@@ -88,8 +92,8 @@ namespace AmberArchives.Services
 				.FirstOrDefault(b => b.Id == dto.Id);
 
 			if (book is null)
-			{				
-				return false;
+			{
+				throw new NotFoundException("Book not found");
 			}
 
 			if (!(dto.OriginalReleaseDate is null))
@@ -107,8 +111,7 @@ namespace AmberArchives.Services
 				book.AuthorId = (int)dto.AuthorId;
 			}
 
-			_dbContext.SaveChanges();			
-			return true;
+			_dbContext.SaveChanges();
 		} // Modify()
 
 

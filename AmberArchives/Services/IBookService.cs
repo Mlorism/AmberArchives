@@ -12,7 +12,7 @@ namespace AmberArchives.Services
 		IEnumerable<BookDto> Get();
 		BookDto GetBook(int id);
 		int Add(CreateBookDto dto);
-		bool Delete(int id);
-		Boolean Update(ModifyBookDto dto);
+		void Delete(int id);
+		void Update(ModifyBookDto dto);
 	}
 }
