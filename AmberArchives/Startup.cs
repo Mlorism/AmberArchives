@@ -35,6 +35,7 @@ namespace AmberArchives
 			services.AddScoped<IBookService, BookService>();
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddSwaggerGen();
+			services.AddScoped<RequestTimeMiddleware>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +46,7 @@ namespace AmberArchives
 				app.UseDeveloperExceptionPage();
 			}
 			app.UseMiddleware<ErrorHandlingMiddleware>();
+			app.UseMiddleware<RequestTimeMiddleware>();
 			app.UseHttpsRedirection();
 
 			app.UseSwagger();
