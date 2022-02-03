@@ -33,6 +33,7 @@ namespace AmberArchives
 			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddAutoMapper(this.GetType().Assembly);
 			services.AddScoped<IBookService, BookService>();
+			services.AddScoped<IEditionService, EditionService>();
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddSwaggerGen();
 			services.AddScoped<RequestTimeMiddleware>();

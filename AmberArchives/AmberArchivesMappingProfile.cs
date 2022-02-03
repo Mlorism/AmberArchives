@@ -17,6 +17,7 @@ namespace AmberArchives
 			CreateMap<Author, AuthorDto>();
 			CreateMap<Edition, EditionDto>();
 			CreateMap<CreateBookDto, Book>();
+			CreateMap<CreateEditionDto, Edition>();
 		}
     }
 }

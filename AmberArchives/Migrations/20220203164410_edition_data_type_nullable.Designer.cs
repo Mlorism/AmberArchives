@@ -4,14 +4,16 @@ using AmberArchives.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmberArchives.Migrations
 {
     [DbContext(typeof(AmberArchivesDbContext))]
-    partial class AmberArchivesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220203164410_edition_data_type_nullable")]
+    partial class edition_data_type_nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

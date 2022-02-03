@@ -26,6 +26,14 @@ namespace AmberArchives.Entities
                 .IsRequired()
                 .HasMaxLength(50);
 
+            modelBuilder.Entity<Edition>()
+                .Property(e => e.BookId)
+                .IsRequired();
+
+            modelBuilder.Entity<Edition>()
+                .Property(e => e.Title)
+                .IsRequired();
+
             modelBuilder.Entity<Author>()
                 .Property(a => a.FirstName)
                 .IsRequired();
