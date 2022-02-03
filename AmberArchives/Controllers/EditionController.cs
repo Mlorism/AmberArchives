@@ -24,7 +24,23 @@ namespace AmberArchives.Controllers
 		{
 			var newEditionId =_editionService.Create(bookId, dto);
 
-			return Created($"api/{bookId}/edition/{newEditionId}", null);
+			return Created($"api/book/{bookId}/edition/{newEditionId}", null);
+		}
+
+		[HttpGet ("{editionId}")]
+		public ActionResult Get([FromRoute] int bookId, [FromRoute] int editionId)
+		{
+			var edition = _editionService.GetById(bookId, editionId);
+
+			return Ok(edition);
+		}
+
+		[HttpGet()]
+		public ActionResult Get([FromRoute] int bookId)
+		{
+			var result = _editionService.GetAll(bookId);
+
+			return Ok(result);
 		}
 	}
 }

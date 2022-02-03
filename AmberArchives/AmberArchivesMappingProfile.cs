@@ -14,10 +14,10 @@ namespace AmberArchives
 		public AmberArchivesMappingProfile()
 		{
 			CreateMap<Book, BookDto>();
-			CreateMap<Author, AuthorDto>();
-			CreateMap<Edition, EditionDto>();
 			CreateMap<CreateBookDto, Book>();
+			CreateMap<Edition, EditionDto>();
 			CreateMap<CreateEditionDto, Edition>();
+			CreateMap<Author, AuthorDto>();
 		}
     }
 }
