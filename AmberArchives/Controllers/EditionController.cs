@@ -19,6 +19,15 @@ namespace AmberArchives.Controllers
 		{
 			_editionService = editionService;
 		}
+
+		[HttpDelete]
+		public ActionResult Delete([FromRoute] int bookId)
+		{
+			_editionService.RemoveAll(bookId);
+
+			return NoContent();
+		}
+
 		[HttpPost]
 		public ActionResult Post([FromRoute] int bookId, [FromBody]CreateEditionDto dto)
 		{

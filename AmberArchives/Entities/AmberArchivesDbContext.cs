@@ -13,6 +13,8 @@ namespace AmberArchives.Entities
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Edition> Editions { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -40,6 +42,14 @@ namespace AmberArchives.Entities
 
             modelBuilder.Entity<Author>()
                 .Property(a => a.LastName)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired();
+
+            modelBuilder.Entity<UserRole>()
+                .Property(u => u.RoleType)
                 .IsRequired();
         }
 

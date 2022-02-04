@@ -31,6 +31,7 @@ namespace AmberArchives
 		{					
 			services.AddControllers();
 			services.AddDbContext<AmberArchivesDbContext>();
+			services.AddScoped<AmberArchivesSeeder>();
 			services.AddAutoMapper(this.GetType().Assembly);
 			services.AddScoped<IBookService, BookService>();
 			services.AddScoped<IEditionService, EditionService>();
@@ -40,8 +41,10 @@ namespace AmberArchives
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AmberArchivesSeeder seeder)
 		{
+			seeder.Seed();
+			
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();

@@ -11,5 +11,6 @@ namespace AmberArchives.Services
 		int Create(int bookId, CreateEditionDto dto);
 		EditionDto GetById(int bookId, int editionId);
 		List<EditionDto> GetAll(int bookId);
+		void RemoveAll(int bookId);
 	}
 }
