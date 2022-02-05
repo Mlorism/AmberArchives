@@ -1,7 +1,11 @@
 using AmberArchives.Controllers;
 using AmberArchives.Entities;
 using AmberArchives.Middleware;
+using AmberArchives.Models;
+using AmberArchives.Models.Validators;
 using AmberArchives.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,7 +34,7 @@ namespace AmberArchives
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{					
-			services.AddControllers();
+			services.AddControllers().AddFluentValidation();
 			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddScoped<AmberArchivesSeeder>();
 			services.AddAutoMapper(this.GetType().Assembly);
@@ -40,6 +44,7 @@ namespace AmberArchives
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddScoped<RequestTimeMiddleware>();
 			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+			services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 			services.AddSwaggerGen();
 		}
 
