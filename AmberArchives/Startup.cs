@@ -1,7 +1,11 @@
 using AmberArchives.Controllers;
 using AmberArchives.Entities;
 using AmberArchives.Middleware;
+using AmberArchives.Models;
+using AmberArchives.Models.Validators;
 using AmberArchives.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,9 +15,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AmberArchives
@@ -29,8 +35,30 @@ namespace AmberArchives
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
-		{					
-			services.AddControllers();
+		{
+			var authenticatonSettings = new AuthenticationSettings();
+			Configuration.GetSection("Authentication").Bind(authenticatonSettings);
+
+			services.AddSingleton(authenticatonSettings);
+			services.AddAuthentication(option =>
+			{
+				option.DefaultAuthenticateScheme = "Bearer";
+				option.DefaultScheme = "Bearer";
+				option.DefaultChallengeScheme = "Bearer";
+			}).AddJwtBearer(cfg =>
+			{
+				cfg.RequireHttpsMetadata = false;
+				cfg.SaveToken = true;
+				cfg.TokenValidationParameters = new TokenValidationParameters
+				{
+					ValidIssuer = authenticatonSettings.JwtIssuer,
+					ValidAudience = authenticatonSettings.JwtIssuer,
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticatonSettings.JwtKey)),
+				};
+
+
+			});
+			services.AddControllers().AddFluentValidation();
 			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddScoped<AmberArchivesSeeder>();
 			services.AddAutoMapper(this.GetType().Assembly);
@@ -40,6 +68,7 @@ namespace AmberArchives
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddScoped<RequestTimeMiddleware>();
 			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+			services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 			services.AddSwaggerGen();
 		}
 
@@ -54,6 +83,7 @@ namespace AmberArchives
 			}
 			app.UseMiddleware<ErrorHandlingMiddleware>();
 			app.UseMiddleware<RequestTimeMiddleware>();
+			app.UseAuthentication();
 			app.UseHttpsRedirection();
 
 			app.UseSwagger();
