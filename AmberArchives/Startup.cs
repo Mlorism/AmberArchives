@@ -5,6 +5,7 @@ using AmberArchives.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,9 +36,11 @@ namespace AmberArchives
 			services.AddAutoMapper(this.GetType().Assembly);
 			services.AddScoped<IBookService, BookService>();
 			services.AddScoped<IEditionService, EditionService>();
+			services.AddScoped<IAccountService, AccountService>();
 			services.AddScoped<ErrorHandlingMiddleware>();
-			services.AddSwaggerGen();
 			services.AddScoped<RequestTimeMiddleware>();
+			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+			services.AddSwaggerGen();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
