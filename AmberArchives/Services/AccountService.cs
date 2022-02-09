@@ -1,4 +1,5 @@
 ﻿using AmberArchives.Entities;
+using AmberArchives.Enums;
 using AmberArchives.Exceptions;
 using AmberArchives.Models;
 using Microsoft.AspNetCore.Identity;
@@ -72,10 +73,16 @@ namespace AmberArchives.Services
 			var claims = new List<Claim>(){
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-				new Claim(ClaimTypes.Role, $"{user.Role.RoleType}"),
-				new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-mm-dd")),
-				new Claim("Nationality", user.Nationality),
+				new Claim(ClaimTypes.Role, $"{Enum.GetName(typeof(UserRoleEnum), user.Role.RoleType)}"),
+				new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-mm-dd")),				
 			};
+
+			if (!string.IsNullOrEmpty(user.Nationality))
+			{
+				claims.Add(
+					new Claim("Nationality", user.Nationality)
+					);
+			}
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticatonSettings.JwtKey));
 			var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

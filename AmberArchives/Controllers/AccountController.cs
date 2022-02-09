@@ -1,5 +1,6 @@
 ﻿using AmberArchives.Models;
 using AmberArchives.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace AmberArchives.Controllers
 {
     [Route("api/account")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
 		private readonly IAccountService _accountService;
@@ -22,6 +24,7 @@ namespace AmberArchives.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
 		{
             _accountService.RegisterUser(dto);
@@ -30,6 +33,7 @@ namespace AmberArchives.Controllers
 		}
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public ActionResult Login([FromBody] LoginDto dto)
 		{
             string token = _accountService.GenerateJwt(dto);

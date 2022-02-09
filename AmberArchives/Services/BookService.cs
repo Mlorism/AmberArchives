@@ -17,11 +17,13 @@ namespace AmberArchives.Services
 		private readonly AmberArchivesDbContext _dbContext;
 		private readonly IMapper _mapper;
 		private readonly ILogger _logger;
-		public BookService(AmberArchivesDbContext dbContext, IMapper mapper, ILogger<BookService> logger)
+		private readonly IUserContextService _userContextService;
+		public BookService(AmberArchivesDbContext dbContext, IMapper mapper, ILogger<BookService> logger, IUserContextService userContextService)
 		{
 			_dbContext = dbContext;
 			_mapper = mapper;
 			_logger = logger;
+			_userContextService = userContextService;
 		}
 
         public BookDto GetBook(int id)
@@ -41,21 +43,30 @@ namespace AmberArchives.Services
 			return result;
 		} // GetBook()
 
-		public IEnumerable<BookDto> Get()
+		public PageResult<BookDto> GetAll(BookQuery query)
 		{
-			var books = _dbContext
+			var baseQuery = _dbContext
 				.Books
 				.Include(b => b.Author)
 				.Include(b => b.Editions)
+				.Where(b => query.SearchPhraze == null || (b.OriginalTitle.ToLower().Contains(query.SearchPhraze.ToLower())));
+				
+
+			var books = baseQuery
+				.Skip(query.PageSize * (query.PageNumber - 1))
+				.Take(query.PageSize)
 				.ToList();
 
 			var booksDto = _mapper.Map<List<BookDto>>(books);
 
-			return booksDto;
+			var result = new PageResult<BookDto>(booksDto, baseQuery.Count(), query.PageSize, query.PageNumber);
+
+			return result;
 		} // Get()
 
 		public int Add(CreateBookDto dto)
-		{			
+		{
+			// var user = _userContextService.GetUserId; zdobędziemy id usera, który dodał do bazy książkę, trzeba dorzucić datę i zrobić na to miejsce w bazie
 			var book = _mapper.Map<Book>(dto);
 			_dbContext.Books.Add(book);
 			_dbContext.SaveChanges();

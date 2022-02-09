@@ -56,7 +56,6 @@ namespace AmberArchives
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticatonSettings.JwtKey)),
 				};
 
-
 			});
 			services.AddControllers().AddFluentValidation();
 			services.AddDbContext<AmberArchivesDbContext>();
@@ -69,6 +68,9 @@ namespace AmberArchives
 			services.AddScoped<RequestTimeMiddleware>();
 			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 			services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+			services.AddScoped<IValidator<BookQuery>, BookQueryValidator>();
+			services.AddScoped<IUserContextService, UserContextService>();
+			services.AddHttpContextAccessor();
 			services.AddSwaggerGen();
 		}
 
@@ -93,7 +95,7 @@ namespace AmberArchives
 			});
 
 			app.UseRouting();
-						
+			app.UseAuthorization();						
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
