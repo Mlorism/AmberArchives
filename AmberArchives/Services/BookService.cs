@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,7 +51,24 @@ namespace AmberArchives.Services
 				.Include(b => b.Author)
 				.Include(b => b.Editions)
 				.Where(b => query.SearchPhraze == null || (b.OriginalTitle.ToLower().Contains(query.SearchPhraze.ToLower())));
-				
+
+
+			if (!string.IsNullOrEmpty(query.SortBy))
+			{
+				var columnsSelector = new Dictionary<string, Expression<Func<Book, object>>>()
+				{
+					{nameof(Book.OriginalTitle), b => b.OriginalTitle},
+					{nameof(Book.Author.LastName), b => b.Author.LastName},
+					{nameof(Book.AverageRating), b => b.AverageRating},
+				};
+
+				var selectedColumn = columnsSelector[query.SortBy];
+
+				baseQuery = query.SortDirection == Enums.SortDirection.ASC 
+					? baseQuery.OrderBy(selectedColumn) 
+					: baseQuery.OrderByDescending(selectedColumn);
+			}
+			
 
 			var books = baseQuery
 				.Skip(query.PageSize * (query.PageNumber - 1))
