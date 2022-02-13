@@ -43,13 +43,18 @@ namespace AmberArchives
 			{
 				new UserRole()
 				{
-					RoleType = UserRoleEnum.User
+					RoleType = UserRoleEnum.Admin
 				},
 
 				new UserRole()
 				{
-					RoleType = UserRoleEnum.Admin
-				}
+					RoleType = UserRoleEnum.Moderator
+				},
+
+				new UserRole()
+				{
+					RoleType = UserRoleEnum.User
+				},
 			};
 
 			return userRoles;

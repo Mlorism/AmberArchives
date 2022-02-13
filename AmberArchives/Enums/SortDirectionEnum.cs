@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Enums
 {
-    public enum SortDirection
+    public enum SortDirectionEnum
     {
         ASC,
         DESC

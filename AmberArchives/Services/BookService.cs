@@ -64,7 +64,7 @@ namespace AmberArchives.Services
 
 				var selectedColumn = columnsSelector[query.SortBy];
 
-				baseQuery = query.SortDirection == Enums.SortDirection.ASC 
+				baseQuery = query.SortDirection == Enums.SortDirectionEnum.ASC 
 					? baseQuery.OrderBy(selectedColumn) 
 					: baseQuery.OrderByDescending(selectedColumn);
 			}

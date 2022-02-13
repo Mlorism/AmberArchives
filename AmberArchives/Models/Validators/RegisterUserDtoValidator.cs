@@ -12,9 +12,11 @@ namespace AmberArchives.Models.Validators
     {
 		public RegisterUserDtoValidator(AmberArchivesDbContext dbContext)
 		{
-			RuleFor(x => x.Email).NotEmpty().EmailAddress();
+			RuleFor(x => x.Email).NotEmpty().EmailAddress();			
 
 			RuleFor(x => x.Password).MinimumLength(6);
+
+			RuleFor(x => x.PrimaryLanguage).NotEmpty();
 
 			RuleFor(x => x.ConfirmPassword).Equal(x => x.Password);
 
@@ -26,6 +28,15 @@ namespace AmberArchives.Models.Validators
 					context.AddFailure("Email", "That email is taken");
 				}
 			});
+			RuleFor(x => x.Username).NotEmpty().Custom((value, context) =>
+			{
+				var usernameInUse = dbContext.Users.Any(u => u.Username == value);
+				if (usernameInUse)
+				{
+					context.AddFailure("Username", "That username is taken");
+				}
+			});
+				
 		}
     }
 }

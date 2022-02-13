@@ -9,6 +9,7 @@ namespace AmberArchives.Enums
     public enum UserRoleEnum
     {
         Admin, 
+        Moderator,
         User,
     }
 }
