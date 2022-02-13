@@ -9,7 +9,10 @@ namespace AmberArchives.Entities
 {
     public class AmberArchivesDbContext : DbContext
     {
-        private string _connectionString = "Server=(localdb)\\mssqllocaldb;Database=AmberArchivesDb;Trusted_Connection=True;";
+		public AmberArchivesDbContext(DbContextOptions<AmberArchivesDbContext> options) : base(options)
+		{
+
+		}
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Edition> Editions { get; set; }
@@ -52,10 +55,6 @@ namespace AmberArchives.Entities
                 .Property(u => u.RoleType)
                 .IsRequired();
         }
-
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-            optionsBuilder.UseSqlServer(_connectionString);
-		}
-	}
+        
+    }
 }

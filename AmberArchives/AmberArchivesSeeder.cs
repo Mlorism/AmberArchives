@@ -1,5 +1,6 @@
 ﻿using AmberArchives.Entities;
 using AmberArchives.Enums;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,13 @@ namespace AmberArchives
 		{
 			if (_dbContext.Database.CanConnect())
 			{
+				var pendingMigrations = _dbContext.Database.GetPendingMigrations();
+
+				if (pendingMigrations != null && pendingMigrations.Any())
+				{
+					_dbContext.Database.Migrate();
+				}
+
 				if (!_dbContext.UserRoles.Any())
 				{
 					var roles = GetUserRoles();

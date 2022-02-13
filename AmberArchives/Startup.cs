@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -58,7 +59,6 @@ namespace AmberArchives
 
 			});
 			services.AddControllers().AddFluentValidation();
-			services.AddDbContext<AmberArchivesDbContext>();
 			services.AddScoped<AmberArchivesSeeder>();
 			services.AddAutoMapper(this.GetType().Assembly);
 			services.AddScoped<IBookService, BookService>();
@@ -81,6 +81,9 @@ namespace AmberArchives
 				.WithOrigins(Configuration["AllowedOrigins"])
 			);
 			});
+
+			services.AddDbContext<AmberArchivesDbContext>
+				(options => options.UseSqlServer(Configuration.GetConnectionString("AmberArchivesDbConnection")));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
