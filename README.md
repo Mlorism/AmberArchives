@@ -8,3 +8,6 @@ AspNetCore,
 EntityFrameworkCore (with MS SQL),
 Swagger,
 NLog
+
+
+Marcin Kupiński © All rights reserved 2022
