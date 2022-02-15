@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Entities
 {
-	public class Book
+	public class Book : ModUserEntity
 	{	
 		public int Id { get; set; }
 		public string OriginalTitle { get; set; }
 		public int AuthorId { get; set; }
 		[Column(TypeName = "date")]
-		public DateTime? OriginalReleaseDate { get; set; }		
-		public float AverageRating { get; set; }
+		public DateTime? OriginalReleaseDate { get; set; }
+		public int AverageRating { get; set; }
 		public virtual Author Author { get; set; }
 		public virtual List<Edition> Editions { get; set; }
+		public virtual List<BookRating> Ratings { get; set; }
 	}
 }

@@ -4,14 +4,16 @@ using AmberArchives.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmberArchives.Migrations
 {
     [DbContext(typeof(AmberArchivesDbContext))]
-    partial class AmberArchivesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220215193649_book_and_user_rating")]
+    partial class book_and_user_rating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,9 +39,6 @@ namespace AmberArchives.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ModUserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Authors");
@@ -56,9 +55,6 @@ namespace AmberArchives.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("AverageRating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ModUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("OriginalReleaseDate")
@@ -116,9 +112,6 @@ namespace AmberArchives.Migrations
 
                     b.Property<string>("ISBN")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ModUserId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Publisher")
                         .HasColumnType("nvarchar(max)");

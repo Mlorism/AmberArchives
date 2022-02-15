@@ -15,6 +15,8 @@ namespace AmberArchives
 		{
 			CreateMap<Book, BookDto>();
 			CreateMap<CreateBookDto, Book>();
+			CreateMap<RateBookDto, BookRating>()
+				.ForMember(m => m.UserId, c => c.MapFrom(s => s.ModUserId));
 			CreateMap<Edition, EditionDto>();
 			CreateMap<CreateEditionDto, Edition>();
 			CreateMap<Author, AuthorDto>();

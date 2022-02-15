@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Models
 {
-    public class ModifyBookDto
+    public class ModifyBookDto : ModUserDto
     {
         [Required]
         [Range(1, double.PositiveInfinity)]

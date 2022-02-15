@@ -9,10 +9,11 @@ namespace AmberArchives.Services
 {
 	public interface IBookService
 	{
-		PageResult<BookDto> GetAll(BookQuery query);
 		BookDto GetBook(int id);
+		PageResult<BookDto> GetAll(BookQuery query);
 		int Add(CreateBookDto dto);
-		void Delete(int id);
+		void Rate(RateBookDto dto);
+		void Delete(int bookId, int userId);
 		void Update(ModifyBookDto dto);
 	}
 }

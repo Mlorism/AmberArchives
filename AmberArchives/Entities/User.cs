@@ -17,5 +17,6 @@ namespace AmberArchives.Entities
 		public string PasswordHash { get; set; }
 		public int RoleId { get; set; }
 		public virtual UserRole Role { get; set; }
+		public virtual List<BookRating> Ratings { get; set; }
 	}
 }

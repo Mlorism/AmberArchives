@@ -1,4 +1,4 @@
-﻿ using AmberArchives.Entities;
+﻿using AmberArchives.Entities;
 using AmberArchives.Enums;
 using AmberArchives.Models;
 using AmberArchives.Services;
@@ -16,40 +16,37 @@ namespace AmberArchives.Controllers
 {
 	[Route("api/book")]
 	[ApiController]
-	//[Authorize]
+	[Authorize]
 	public class BookController : ControllerBase
 	{
 		private readonly IBookService _bookService;
 		private readonly AmberArchivesDbContext _dbContext;
-		
+
 
 		public BookController(IBookService bookService, AmberArchivesDbContext dbContext)
 		{
 			_bookService = bookService;
-			_dbContext = dbContext;			
+			_dbContext = dbContext;
 		}
 
-		[HttpGet]
-		public ActionResult<IEnumerable<BookDto>> GetAll([FromQuery]BookQuery query)
+		[HttpGet("get")]
+		public ActionResult<BookDto> Get([FromBody] GetElementDto dto)
 		{
-			var booksDtos = _bookService.GetAll(query);			
+			var book = _bookService.GetBook(dto.Id);
+
+			return Ok(book);
+		} // Get()
+
+		[HttpGet("getAll")]
+		public ActionResult<IEnumerable<BookDto>> GetAll([FromBody] BookQuery query)
+		{
+			var booksDtos = _bookService.GetAll(query);
 
 			return Ok(booksDtos);
 		} // GetAll()
 
-		[HttpGet("{id}")]
-		public ActionResult<BookDto> Get([FromRoute] int id)
-		{
-			if (id < 1)
-			{
-				return BadRequest(ControllerHelper.Messages.idToSmall);
-			}
-			var book = _bookService.GetBook(id);				
-			
-			return Ok(book);
-		} // Get()
 
-		[HttpPost]
+		[HttpPost("add")]
 		public ActionResult CreateBook([FromBody] CreateBookDto dto)
 		{
 			if (ControllerHelper.BookDuplicate(_dbContext.Books, dto))
@@ -60,18 +57,26 @@ namespace AmberArchives.Controllers
 			else if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
 			{
 				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
-			}			
+			}
 			var id = _bookService.Add(dto);
 
-			return Created($"api/book/{id}", null);
+			return Ok();
 		} // CreateBook()
 
-		[HttpDelete("{id}")]
-		[Authorize(Roles = "Admin")]
-		public ActionResult Delete([FromRoute] int id)
+		[HttpPost("rate")]
+		public ActionResult RateBook([FromBody] RateBookDto dto)
 		{
-			_bookService.Delete(id);
-						
+			_bookService.Rate(dto);
+
+			return Ok();
+		} // RateBook()
+
+		[HttpDelete("delete")]
+		[Authorize(Roles = "Admin")]
+		public ActionResult Delete([FromBody] DeleteElementDto dto)
+		{
+			_bookService.Delete(dto.Id, dto.ModUserId);
+
 			return NoContent();
 		} // Delete()
 
@@ -80,7 +85,7 @@ namespace AmberArchives.Controllers
 		{
 			if (!_dbContext.Books.Any(b => b.Id == dto.Id))
 			{
-				
+
 				return NotFound($"Book {ControllerHelper.Messages.idDontExist}");
 			}
 

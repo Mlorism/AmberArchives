@@ -7,14 +7,10 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Models
 {
-    public class CreateBookDto : ModUserDto
+    public class DeleteElementDto : ModUserDto
     {
         [Required]
-        [MaxLength(50)]
-        public string OriginalTitle { get; set; }
-        [Required]
         [Range(1, double.PositiveInfinity)]
-        public int AuthorId { get; set; }
-        public DateTime? OriginalReleaseDate { get; set; }
+        public int Id { get; set; }
     }
 }

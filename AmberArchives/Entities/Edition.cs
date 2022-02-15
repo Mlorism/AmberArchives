@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Entities
 {
-    public class Edition
+    public class Edition : ModUserEntity
     {
         public int Id { get; set; }
         public string Title { get; set; }

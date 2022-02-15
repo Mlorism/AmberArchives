@@ -18,13 +18,12 @@ namespace AmberArchives.Services
 		private readonly AmberArchivesDbContext _dbContext;
 		private readonly IMapper _mapper;
 		private readonly ILogger _logger;
-		private readonly IUserContextService _userContextService;
-		public BookService(AmberArchivesDbContext dbContext, IMapper mapper, ILogger<BookService> logger, IUserContextService userContextService)
+	
+		public BookService(AmberArchivesDbContext dbContext, IMapper mapper, ILogger<BookService> logger)
 		{
 			_dbContext = dbContext;
 			_mapper = mapper;
 			_logger = logger;
-			_userContextService = userContextService;
 		}
 
         public BookDto GetBook(int id)
@@ -84,7 +83,6 @@ namespace AmberArchives.Services
 
 		public int Add(CreateBookDto dto)
 		{
-			// var user = _userContextService.GetUserId; zdobędziemy id usera, który dodał do bazy książkę, trzeba dorzucić datę i zrobić na to miejsce w bazie
 			var book = _mapper.Map<Book>(dto);
 			_dbContext.Books.Add(book);
 			_dbContext.SaveChanges();
@@ -92,13 +90,31 @@ namespace AmberArchives.Services
 			return book.Id;
 		} // Add()
 
-		public void Delete(int id)
+		public void Rate(RateBookDto dto)
 		{
-			_logger.LogWarning($"Book with id {id} DELETE action invoked");
+			var bookRate = _mapper.Map<BookRating>(dto);
+			var book = _dbContext.Books.FirstOrDefault(b => b.Id == dto.BookId);
+			var rating = book.Ratings.FirstOrDefault(r => r.UserId == dto.ModUserId);
+			if (rating is null)
+			{
+				book.Ratings.Add(bookRate);
+			}
+			else
+			{
+				rating.Rating = dto.Rating;
+			}
+			// calculate new rating for book
+			_dbContext.SaveChanges();
+
+		} // Rate()
+
+		public void Delete(int bookId, int userId)
+		{
+			_logger.LogWarning($"Book with id {bookId} DELETE action invoked (user Id {userId})");
 
 			var book = _dbContext
 				.Books
-				.FirstOrDefault(b => b.Id == id);
+				.FirstOrDefault(b => b.Id == bookId);
 
 			if (book is null)
 			{
