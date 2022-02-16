@@ -81,16 +81,28 @@ namespace AmberArchives.Services
 			return result;
 		} // Get()
 
-		public int Add(CreateBookDto dto)
+		public bool Add(CreateBookDto dto)
 		{
+			var duplicateBook = _dbContext.Books.FirstOrDefault(b => b.OriginalTitle == dto.OriginalTitle && b.AuthorId == dto.AuthorId);
+			var author = _dbContext.Authors.FirstOrDefault(a => a.Id == dto.AuthorId);
+
+			if (duplicateBook != null)
+			{
+				throw new DuplicateException("Book alredy exist");
+			}
+			else if (author is null)
+			{
+				throw new NotFoundException("Author with given id does not exist ");
+			}
+
 			var book = _mapper.Map<Book>(dto);
 			_dbContext.Books.Add(book);
 			_dbContext.SaveChanges();
 
-			return book.Id;
+			return true;
 		} // Add()
 
-		public void Delete(int bookId, int userId)
+		public bool Delete(int bookId, int userId)
 		{
 			_logger.LogWarning($"Book with id {bookId} DELETE action invoked (user Id {userId})");
 
@@ -105,13 +117,18 @@ namespace AmberArchives.Services
 
 			_dbContext.Books.Remove(book);
 			_dbContext.SaveChanges();
-
-	
+			
+			return true;
 		} // Delete()
 
-		public void Update(ModifyBookDto dto)
+		public bool Update(ModifyBookDto dto)
 		{
-			_logger.LogInformation($"Book with id {dto.Id} UPDATE action invoked");
+			_logger.LogInformation($"Book with id {dto.Id} UPDATE action invoked");			
+						
+			if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
+			{
+				throw new NotFoundException("Autor not found");
+			}
 
 			var book = _dbContext
 				.Books
@@ -139,6 +156,8 @@ namespace AmberArchives.Services
 			}
 
 			_dbContext.SaveChanges();
+
+			return true;
 		} // Modify()
 
 

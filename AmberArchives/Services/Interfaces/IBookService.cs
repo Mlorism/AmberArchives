@@ -11,8 +11,8 @@ namespace AmberArchives.Services
 	{
 		BookDto GetBook(int id);
 		PageResult<BookDto> GetAll(BookQuery query);
-		int Add(CreateBookDto dto);
-		void Delete(int bookId, int userId);
-		void Update(ModifyBookDto dto);
+		bool Add(CreateBookDto dto);
+		bool Delete(int bookId, int userId);
+		bool Update(ModifyBookDto dto);
 	}
 }

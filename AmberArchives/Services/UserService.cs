@@ -32,7 +32,7 @@ namespace AmberArchives.Services
 				.Users
 				.Include(u => u.Ratings)
 				.FirstOrDefault(u => u.Id == dto.ModUserId);
-
+			// verify user and book existence
 			var rating = user.Ratings.FirstOrDefault(r => r.UserId == dto.ModUserId);
 
 			if (rating is null)

@@ -19,14 +19,11 @@ namespace AmberArchives.Controllers
 	[Authorize]
 	public class BookController : ControllerBase
 	{
-		private readonly IBookService _bookService;
-		private readonly AmberArchivesDbContext _dbContext;
+		private readonly IBookService _bookService;		
 
-
-		public BookController(IBookService bookService, AmberArchivesDbContext dbContext)
+		public BookController(IBookService bookService)
 		{
 			_bookService = bookService;
-			_dbContext = dbContext;
 		}
 
 		[HttpGet("get")]
@@ -49,47 +46,28 @@ namespace AmberArchives.Controllers
 		[HttpPost("add")]
 		public ActionResult CreateBook([FromBody] CreateBookDto dto)
 		{
-			if (ControllerHelper.BookDuplicate(_dbContext.Books, dto))
-			{
-				return BadRequest(ControllerHelper.Messages.bookDuplicate);
-			}
+			var result = _bookService.Add(dto);
 
-			else if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
-			{
-				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
-			}
-			var id = _bookService.Add(dto);
-
-			return Ok();
+			return Ok(result);
 		} // CreateBook()
 
 	
 		[HttpDelete("delete")]
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin, Moderator")]
 		public ActionResult Delete([FromBody] DeleteElementDto dto)
 		{
-			_bookService.Delete(dto.Id, dto.ModUserId);
+			var result = _bookService.Delete(dto.Id, dto.ModUserId);
 
-			return NoContent();
+			return Ok(result);
 		} // Delete()
 
-		[HttpPut]
+		[HttpPut("update")]
+		[Authorize(Roles = "Admin, Moderator")]
 		public ActionResult Update([FromBody] ModifyBookDto dto)
-		{
-			if (!_dbContext.Books.Any(b => b.Id == dto.Id))
-			{
+		{		
+			var result =_bookService.Update(dto);
 
-				return NotFound($"Book {ControllerHelper.Messages.idDontExist}");
-			}
-
-			else if (!(dto.AuthorId is null) && !_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
-			{
-				return NotFound($"Author {ControllerHelper.Messages.idDontExist}");
-			}
-
-			_bookService.Update(dto);
-
-			return Ok();
+			return Ok(result);
 		} // Update()
 	}
 }
