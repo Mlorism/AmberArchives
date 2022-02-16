@@ -63,14 +63,7 @@ namespace AmberArchives.Controllers
 			return Ok();
 		} // CreateBook()
 
-		[HttpPost("rate")]
-		public ActionResult RateBook([FromBody] RateBookDto dto)
-		{
-			_bookService.Rate(dto);
-
-			return Ok();
-		} // RateBook()
-
+	
 		[HttpDelete("delete")]
 		[Authorize(Roles = "Admin")]
 		public ActionResult Delete([FromBody] DeleteElementDto dto)

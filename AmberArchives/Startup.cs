@@ -4,6 +4,7 @@ using AmberArchives.Middleware;
 using AmberArchives.Models;
 using AmberArchives.Models.Validators;
 using AmberArchives.Services;
+using AmberArchives.Services.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -61,9 +62,12 @@ namespace AmberArchives
 			services.AddControllers().AddFluentValidation();
 			services.AddScoped<AmberArchivesSeeder>();
 			services.AddAutoMapper(this.GetType().Assembly);
+
 			services.AddScoped<IBookService, BookService>();
 			services.AddScoped<IEditionService, EditionService>();
 			services.AddScoped<IAccountService, AccountService>();
+			services.AddScoped<IUserService, UserService>();
+
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddScoped<RequestTimeMiddleware>();
 			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

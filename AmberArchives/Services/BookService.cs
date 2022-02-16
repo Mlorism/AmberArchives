@@ -90,24 +90,6 @@ namespace AmberArchives.Services
 			return book.Id;
 		} // Add()
 
-		public void Rate(RateBookDto dto)
-		{
-			var bookRate = _mapper.Map<BookRating>(dto);
-			var book = _dbContext.Books.FirstOrDefault(b => b.Id == dto.BookId);
-			var rating = book.Ratings.FirstOrDefault(r => r.UserId == dto.ModUserId);
-			if (rating is null)
-			{
-				book.Ratings.Add(bookRate);
-			}
-			else
-			{
-				rating.Rating = dto.Rating;
-			}
-			// calculate new rating for book
-			_dbContext.SaveChanges();
-
-		} // Rate()
-
 		public void Delete(int bookId, int userId)
 		{
 			_logger.LogWarning($"Book with id {bookId} DELETE action invoked (user Id {userId})");
