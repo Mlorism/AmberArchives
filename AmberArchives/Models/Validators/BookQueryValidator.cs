@@ -14,8 +14,8 @@ namespace AmberArchives.Models.Validators
 		private string[] allowedSortByColumnNames = { nameof(Book.OriginalTitle), nameof(Book.Author.LastName), nameof(Book.AverageRating), };
 		public BookQueryValidator()
 		{
-			RuleFor(b => b.PageNumber).GreaterThanOrEqualTo(1);
-			RuleFor(b => b.PageSize).Custom((value, context) =>
+			RuleFor(b => (int)b.PageNumber).GreaterThanOrEqualTo(1);
+			RuleFor(b => (int)b.PageSize).Custom((value, context) =>
 			{
 				if (!allowedPageSizes.Contains(value))
 				{

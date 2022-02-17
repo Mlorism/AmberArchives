@@ -72,7 +72,7 @@ namespace AmberArchives
 			services.AddScoped<RequestTimeMiddleware>();
 			services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 			services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
-			services.AddScoped<IValidator<BookQuery>, BookQueryValidator>();
+			// services.AddScoped<IValidator<BookQuery>, BookQueryValidator>();
 			services.AddHttpContextAccessor();
 			services.AddSwaggerGen();
 			services.AddCors(options =>

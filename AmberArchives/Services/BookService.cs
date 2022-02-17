@@ -51,7 +51,6 @@ namespace AmberArchives.Services
 				.Include(b => b.Editions)
 				.Where(b => query.SearchPhraze == null || (b.OriginalTitle.ToLower().Contains(query.SearchPhraze.ToLower())));
 
-
 			if (!string.IsNullOrEmpty(query.SortBy))
 			{
 				var columnsSelector = new Dictionary<string, Expression<Func<Book, object>>>()
@@ -67,31 +66,45 @@ namespace AmberArchives.Services
 					? baseQuery.OrderBy(selectedColumn) 
 					: baseQuery.OrderByDescending(selectedColumn);
 			}
-			
 
-			var books = baseQuery
-				.Skip(query.PageSize * (query.PageNumber - 1))
-				.Take(query.PageSize)
+			List<Book> books;
+
+			if (query?.PageSize is null)
+			{
+				books = baseQuery.ToList();
+			}
+			else
+			{
+				books = baseQuery
+				.Skip((int)(query.PageSize * (query.PageNumber - 1)))
+				.Take((int)query.PageSize)
 				.ToList();
+			}
 
 			var booksDto = _mapper.Map<List<BookDto>>(books);
 
-			var result = new PageResult<BookDto>(booksDto, baseQuery.Count(), query.PageSize, query.PageNumber);
+			var result = new PageResult<BookDto>(booksDto, baseQuery.Count(), (int)(query?.PageSize is null ? baseQuery.Count() : query.PageSize), (int)(query?.PageNumber is null ? 1 : query.PageNumber));
 
 			return result;
 		} // Get()
 
 		public bool Add(CreateBookDto dto)
 		{
+			_logger.LogInformation($"Book {dto.OriginalTitle} ADD action invoked by user {dto.ModUserId}.");
+
 			var duplicateBook = _dbContext.Books.FirstOrDefault(b => b.OriginalTitle == dto.OriginalTitle && b.AuthorId == dto.AuthorId);
 			var author = _dbContext.Authors.FirstOrDefault(a => a.Id == dto.AuthorId);
 
+			// if user Exist?? verify
+
 			if (duplicateBook != null)
 			{
+				_logger.LogInformation($"Book {dto.OriginalTitle} alredy exist.");
 				throw new DuplicateException("Book alredy exist");
 			}
 			else if (author is null)
 			{
+				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist.");
 				throw new NotFoundException("Author with given id does not exist ");
 			}
 
@@ -99,45 +112,51 @@ namespace AmberArchives.Services
 			_dbContext.Books.Add(book);
 			_dbContext.SaveChanges();
 
+			_logger.LogInformation($"Book {dto.OriginalTitle} added to DB by user {dto.ModUserId}.");
+
 			return true;
 		} // Add()
 
-		public bool Delete(int bookId, int userId)
+		public bool Delete(DeleteElementDto dto)
 		{
-			_logger.LogWarning($"Book with id {bookId} DELETE action invoked (user Id {userId})");
+			_logger.LogInformation($"Book with id {dto.ElementId} DELETE action invoked by user {dto.ModUserId})");
 
 			var book = _dbContext
 				.Books
-				.FirstOrDefault(b => b.Id == bookId);
+				.FirstOrDefault(b => b.Id == dto.ElementId);
 
 			if (book is null)
 			{
+				_logger.LogInformation($"Book with id {dto.ElementId} does not exist");
 				throw new NotFoundException("Book not found");
 			}
-
 			_dbContext.Books.Remove(book);
 			_dbContext.SaveChanges();
 			
+			_logger.LogInformation($"Book with id {dto.ElementId} successfully removed by user {dto.ModUserId})");
+
 			return true;
 		} // Delete()
 
 		public bool Update(ModifyBookDto dto)
 		{
-			_logger.LogInformation($"Book with id {dto.Id} UPDATE action invoked");			
-						
-			if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
-			{
-				throw new NotFoundException("Autor not found");
-			}
+			_logger.LogInformation($"Book with id {dto.BookId} UPDATE action invoked by user {dto.ModUserId}");
 
 			var book = _dbContext
 				.Books
 				.Include(b => b.Author)
-				.FirstOrDefault(b => b.Id == dto.Id);
+				.FirstOrDefault(b => b.Id == dto.BookId);
 
 			if (book is null)
 			{
+				_logger.LogInformation($"Book with id {dto.BookId} does not exist.");
 				throw new NotFoundException("Book not found");
+			}
+
+			if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
+			{
+				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist.");
+				throw new NotFoundException("Autor not found");
 			}
 
 			if (!(dto.OriginalReleaseDate is null))
@@ -156,6 +175,8 @@ namespace AmberArchives.Services
 			}
 
 			_dbContext.SaveChanges();
+
+			_logger.LogInformation($"Book with id {dto.BookId} successfully updated by user {dto.ModUserId}");
 
 			return true;
 		} // Modify()

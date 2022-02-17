@@ -11,6 +11,6 @@ namespace AmberArchives.Models
     {
         [Required]
         [Range(1, double.PositiveInfinity)]
-        public int Id { get; set; }
+        public int ElementId { get; set; }
     }
 }

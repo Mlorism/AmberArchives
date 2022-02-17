@@ -12,11 +12,11 @@ namespace AmberArchives.Models
     {
         [Required]
         [Range(1, double.PositiveInfinity)]
-        public int Id { get; set; }
+        public int BookId { get; set; }
         [MaxLength(50)]
         public string OriginalTitle { get; set; }
         [Range(1, double.PositiveInfinity)]
-        public int AuthorId { get; set; }
+        public int? AuthorId { get; set; }
         [Column(TypeName = "date")]
         public DateTime? OriginalReleaseDate { get; set; }
     }

@@ -56,7 +56,7 @@ namespace AmberArchives.Controllers
 		[Authorize(Roles = "Admin, Moderator")]
 		public ActionResult Delete([FromBody] DeleteElementDto dto)
 		{
-			var result = _bookService.Delete(dto.Id, dto.ModUserId);
+			var result = _bookService.Delete(dto);
 
 			return Ok(result);
 		} // Delete()
