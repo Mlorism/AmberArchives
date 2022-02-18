@@ -92,20 +92,25 @@ namespace AmberArchives.Services
 		{
 			_logger.LogInformation($"Book {dto.OriginalTitle} ADD action invoked by user {dto.ModUserId}.");
 
-			var duplicateBook = _dbContext.Books.FirstOrDefault(b => b.OriginalTitle == dto.OriginalTitle && b.AuthorId == dto.AuthorId);
-			var author = _dbContext.Authors.FirstOrDefault(a => a.Id == dto.AuthorId);
+			var duplicateBook = _dbContext.Books.Any(b => b.OriginalTitle == dto.OriginalTitle && b.AuthorId == dto.AuthorId);
+			var author = _dbContext.Authors.Any(a => a.Id == dto.AuthorId);
+			var user = _dbContext.Users.FirstOrDefault(u => u.Id == dto.ModUserId);
 
-			// if user Exist?? verify
-
-			if (duplicateBook != null)
+			if (user is null)
 			{
-				_logger.LogInformation($"Book {dto.OriginalTitle} alredy exist.");
+				_logger.LogInformation($"User with id {dto.ModUserId} does not exist. ADD action cancelled.");
+				throw new NotFoundException("User does not exist");
+			}
+
+			if (duplicateBook)
+			{
+				_logger.LogInformation($"Book {dto.OriginalTitle} alredy exist. ADD action cancelled.");
 				throw new DuplicateException("Book alredy exist");
 			}
-			else if (author is null)
+			else if (!author)
 			{
-				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist.");
-				throw new NotFoundException("Author with given id does not exist ");
+				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist. ADD action cancelled.");
+				throw new NotFoundException("Author with given id does not exist");
 			}
 
 			var book = _mapper.Map<Book>(dto);
@@ -119,21 +124,29 @@ namespace AmberArchives.Services
 
 		public bool Delete(DeleteElementDto dto)
 		{
-			_logger.LogInformation($"Book with id {dto.ElementId} DELETE action invoked by user {dto.ModUserId})");
+			_logger.LogInformation($"Book with id {dto.ElementId} DELETE action invoked by user {dto.ModUserId}");
 
 			var book = _dbContext
 				.Books
 				.FirstOrDefault(b => b.Id == dto.ElementId);
 
+			var user = _dbContext.Users.Any(u => u.Id == dto.ModUserId);
+
+			if (!user)
+			{
+				_logger.LogInformation($"User with id {dto.ModUserId} does not exist. DELETE action cancelled.");
+				throw new NotFoundException("User does not exist");
+			}
+
 			if (book is null)
 			{
-				_logger.LogInformation($"Book with id {dto.ElementId} does not exist");
+				_logger.LogInformation($"Book with id {dto.ElementId} does not exist. DELETE action cancelled.");
 				throw new NotFoundException("Book not found");
 			}
 			_dbContext.Books.Remove(book);
 			_dbContext.SaveChanges();
 			
-			_logger.LogInformation($"Book with id {dto.ElementId} successfully removed by user {dto.ModUserId})");
+			_logger.LogInformation($"Book with id {dto.ElementId} successfully removed by user {dto.ModUserId}");
 
 			return true;
 		} // Delete()
@@ -147,15 +160,24 @@ namespace AmberArchives.Services
 				.Include(b => b.Author)
 				.FirstOrDefault(b => b.Id == dto.BookId);
 
+			var user = _dbContext.Users.Any(u => u.Id == dto.ModUserId);
+			var author = _dbContext.Authors.Any(a => a.Id == dto.AuthorId);
+
+			if (!user)
+			{
+				_logger.LogInformation($"User with id {dto.AuthorId} does not exist. UPDATE action cancelled.");
+				throw new NotFoundException("User does not exist");
+			}
+
 			if (book is null)
 			{
-				_logger.LogInformation($"Book with id {dto.BookId} does not exist.");
+				_logger.LogInformation($"Book with id {dto.BookId} does not exist. UPDATE action cancelled.");
 				throw new NotFoundException("Book not found");
 			}
 
-			if (!_dbContext.Authors.Any(a => a.Id == dto.AuthorId))
+			if (!(dto.AuthorId is null) && !author)
 			{
-				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist.");
+				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist. UPDATE action cancelled.");
 				throw new NotFoundException("Autor not found");
 			}
 
@@ -173,6 +195,8 @@ namespace AmberArchives.Services
 			{
 				book.AuthorId = (int)dto.AuthorId;
 			}
+
+			book.ModUserId = (int)dto.ModUserId;
 
 			_dbContext.SaveChanges();
 

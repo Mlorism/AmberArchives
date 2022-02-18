@@ -34,7 +34,6 @@ namespace AmberArchives.Services
 
 
 		}
-
 		public void RegisterUser(RegisterUserDto dto)
 		{
 

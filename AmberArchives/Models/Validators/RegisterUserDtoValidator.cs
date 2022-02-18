@@ -25,7 +25,7 @@ namespace AmberArchives.Models.Validators
 				var emailInUse = dbContext.Users.Any(u => u.Email == value);
 				if (emailInUse)
 				{
-					context.AddFailure("Email", "That email is taken");
+					context.AddFailure("Email", "That email is taken.");
 				}
 			});
 			RuleFor(x => x.Username).NotEmpty().Custom((value, context) =>
@@ -33,7 +33,7 @@ namespace AmberArchives.Models.Validators
 				var usernameInUse = dbContext.Users.Any(u => u.Username == value);
 				if (usernameInUse)
 				{
-					context.AddFailure("Username", "That username is taken");
+					context.AddFailure("Username", "That username is taken.");
 				}
 			});
 				
