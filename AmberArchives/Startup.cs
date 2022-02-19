@@ -67,6 +67,7 @@ namespace AmberArchives
 			services.AddScoped<IEditionService, EditionService>();
 			services.AddScoped<IAccountService, AccountService>();
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IShelfService, ShelfService>();
 
 			services.AddScoped<ErrorHandlingMiddleware>();
 			services.AddScoped<RequestTimeMiddleware>();
