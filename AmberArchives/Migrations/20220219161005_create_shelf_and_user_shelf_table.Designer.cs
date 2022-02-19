@@ -4,14 +4,16 @@ using AmberArchives.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AmberArchives.Migrations
 {
     [DbContext(typeof(AmberArchivesDbContext))]
-    partial class AmberArchivesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220219161005_create_shelf_and_user_shelf_table")]
+    partial class create_shelf_and_user_shelf_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,6 +210,9 @@ namespace AmberArchives.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<int>("EditionId")
                         .HasColumnType("int");
 
@@ -218,6 +223,8 @@ namespace AmberArchives.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookId");
 
                     b.HasIndex("EditionId");
 
@@ -282,6 +289,12 @@ namespace AmberArchives.Migrations
 
             modelBuilder.Entity("AmberArchives.Entities.UserShelf", b =>
                 {
+                    b.HasOne("AmberArchives.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("AmberArchives.Entities.Edition", "Edition")
                         .WithMany()
                         .HasForeignKey("EditionId")
@@ -299,6 +312,8 @@ namespace AmberArchives.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Book");
 
                     b.Navigation("Edition");
 

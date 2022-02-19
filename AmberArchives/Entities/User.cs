@@ -18,5 +18,6 @@ namespace AmberArchives.Entities
 		public int RoleId { get; set; }
 		public virtual UserRole Role { get; set; }
 		public virtual List<BookRating> Ratings { get; set; }
+		public virtual List<UserShelf> UserShelves { get; set; }
 	}
 }
