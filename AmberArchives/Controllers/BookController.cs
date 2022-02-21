@@ -34,6 +34,14 @@ namespace AmberArchives.Controllers
 			return Ok(book);
 		} // Get()
 
+		[HttpGet("getBooks")]
+		public ActionResult<BookDto> GetBooks([FromBody] GetElementsDto dto)
+		{
+			var books = _bookService.GetBooks(dto.Ids);
+
+			return Ok(books);
+		} // Get()
+
 		[HttpGet("getAll")]
 		public ActionResult<IEnumerable<BookDto>> GetAll([FromBody] BookQuery query)
 		{

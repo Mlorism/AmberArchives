@@ -43,6 +43,23 @@ namespace AmberArchives.Services
 			return result;
 		} // GetBook()
 
+		public List<BookDto> GetBooks(int[] ids)
+		{
+			var book = _dbContext
+				.Books
+				.Include(b => b.Author)
+				.Include(b => b.Editions)
+				.Where(b => ids.Contains(b.Id));
+
+			if (book is null)
+			{
+				throw new NotFoundException("No books found");
+			}
+
+			var result = _mapper.Map<List<BookDto>>(book);
+			return result;
+		} // GetBook()
+
 		public PageResult<BookDto> GetAll(BookQuery query)
 		{
 			var baseQuery = _dbContext
