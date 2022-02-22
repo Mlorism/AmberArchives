@@ -42,6 +42,13 @@ namespace AmberArchives
 					_dbContext.Shelfs.AddRange(shelfs);
 					_dbContext.SaveChanges();
 				}
+
+				if (!_dbContext.Generes.Any())
+				{
+					var generes = GetGeneres();
+					_dbContext.Generes.AddRange(generes);
+					_dbContext.SaveChanges();
+				}
 			}
 		} // Seed()
 		private IEnumerable<UserRole> GetUserRoles()
