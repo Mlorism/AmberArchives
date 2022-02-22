@@ -18,5 +18,6 @@ namespace AmberArchives.Entities
 		public virtual Author Author { get; set; }
 		public virtual List<Edition> Editions { get; set; }
 		public virtual List<BookRating> Ratings { get; set; }
+		public virtual List<Genere> Generes { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AmberArchives.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,5 +20,6 @@ namespace AmberArchives.Models
         public int? AuthorId { get; set; }
         [Column(TypeName = "date")]
         public DateTime? OriginalReleaseDate { get; set; }
+        public List<Genere> Generes { get; set; }
     }
 }

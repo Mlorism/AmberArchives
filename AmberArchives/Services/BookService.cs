@@ -32,6 +32,7 @@ namespace AmberArchives.Services
 				.Books
 				.Include(b => b.Author)
 				.Include(b => b.Editions)
+				.Include(b => b.Generes)
 				.FirstOrDefault(b => b.Id == id);
 
 			if (book is null)
@@ -49,6 +50,7 @@ namespace AmberArchives.Services
 				.Books
 				.Include(b => b.Author)
 				.Include(b => b.Editions)
+				.Include(b => b.Generes)
 				.Where(b => ids.Contains(b.Id));
 
 			if (book is null)
@@ -66,6 +68,7 @@ namespace AmberArchives.Services
 				.Books
 				.Include(b => b.Author)
 				.Include(b => b.Editions)
+				.Include(b => b.Generes)
 				.Where(b => query.SearchPhraze == null || (b.OriginalTitle.ToLower().Contains(query.SearchPhraze.ToLower())));
 
 			if (!string.IsNullOrEmpty(query.SortBy))
@@ -112,6 +115,9 @@ namespace AmberArchives.Services
 			var duplicateBook = _dbContext.Books.Any(b => b.OriginalTitle == dto.OriginalTitle && b.AuthorId == dto.AuthorId);
 			var author = _dbContext.Authors.Any(a => a.Id == dto.AuthorId);
 			var user = _dbContext.Users.FirstOrDefault(u => u.Id == dto.ModUserId);
+			var generesList = dto.Generes.Select(g => g.Id).ToList();
+			var bookGeneresCount = _dbContext.Generes.Where(g => generesList.Contains(g.Id)).Count();
+
 
 			if (user is null)
 			{
@@ -128,6 +134,12 @@ namespace AmberArchives.Services
 			{
 				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist. ADD action cancelled.");
 				throw new NotFoundException("Author with given id does not exist");
+			}
+
+			if (dto.Generes?.Count > 0 && dto.Generes.Count != bookGeneresCount)
+			{
+				_logger.LogInformation($"At least one genere does not exist. ADD action cancelled.");
+				throw new NotFoundException("At least one genere not found");
 			}
 
 			var book = _mapper.Map<Book>(dto);
@@ -179,6 +191,8 @@ namespace AmberArchives.Services
 
 			var user = _dbContext.Users.Any(u => u.Id == dto.ModUserId);
 			var author = _dbContext.Authors.Any(a => a.Id == dto.AuthorId);
+			var generesList = dto.Generes.Select(g => g.Id).ToList();
+			var bookGeneresCount = _dbContext.Generes.Where(g => generesList.Contains(g.Id)).Count();			
 
 			if (!user)
 			{
@@ -196,6 +210,19 @@ namespace AmberArchives.Services
 			{
 				_logger.LogInformation($"Author with id {dto.AuthorId} does not exist. UPDATE action cancelled.");
 				throw new NotFoundException("Autor not found");
+			}
+
+			if (dto.Generes?.Count > 0)
+			{
+				if (dto.Generes.Count == bookGeneresCount)
+				{
+					book.Generes = dto.Generes;
+				}
+				else
+				{
+					_logger.LogInformation($"At least one genere does not exist. UPDATE action cancelled.");
+					throw new NotFoundException("At least one genere not found");
+				}
 			}
 
 			if (!(dto.OriginalReleaseDate is null))

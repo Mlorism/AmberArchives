@@ -19,6 +19,8 @@ namespace AmberArchives.Entities
         public DbSet<User> Users { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Shelf> Shelfs { get; set; }
+        public DbSet<Genere> Generes { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

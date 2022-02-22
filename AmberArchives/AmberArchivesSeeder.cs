@@ -88,6 +88,103 @@ namespace AmberArchives
 			return shelfs;
 		} // GetShelfs()
 
+		private IEnumerable<Genere> GetGeneres()
+		{
+			var generes = new List<Genere>()
+			{
+				new Genere()
+				{
+					Genre = "Action"
+				},
+				new Genere()
+				{
+					Genre = "Adventure"
+				},
+				new Genere()
+				{
+					Genre = "Graphic Novel"
+				},
+				new Genere()
+				{
+					Genre = "Detective"
+				},
+				new Genere()
+				{
+					Genre = "Mystery"
+				},
+				new Genere()
+				{
+					Genre = "Fantasy"
+				},
+				new Genere()
+				{
+					Genre = "Historical Fiction"
+				},
+				new Genere()
+				{
+					Genre = "Horror"
+				},
+				new Genere()
+				{
+					Genre = "Fiction"
+				},
+				new Genere()
+				{
+					Genre = "Romance"
+				},
+				new Genere()
+				{
+					Genre = "Sci-Fi"
+				},
+				new Genere()
+				{
+					Genre = "History"
+				},
+				new Genere()
+				{
+					Genre = "Military"
+				},
+					new Genere()
+				{
+					Genre = "Memoir"
+				},
+				new Genere()
+				{
+					Genre = "Poetry"
+				},
+				new Genere()
+				{
+					Genre = "Self-Help"
+				},
+				new Genere()
+				{
+					Genre = "Biography"
+				},
+					new Genere()
+				{
+					Genre = "Dystopian"
+				},
+				new Genere()
+				{
+					Genre = "Paranormal"
+				},
+				new Genere()
+				{
+					Genre = "Children’s"
+				},
+					new Genere()
+				{
+					Genre = "Travel"
+				},
+						new Genere()
+				{
+					Genre = "Humor"
+				},
+			};
+
+			return generes;
+		} // GetGeneres()
+
 
 
 
