@@ -21,6 +21,7 @@ namespace AmberArchives
 			CreateMap<CreateEditionDto, Edition>();
 			CreateMap<Author, AuthorDto>();
 			CreateMap<Shelf, ShelfDto>();
+			CreateMap<User, RegisterUserDto>();
 		}
     }
 }

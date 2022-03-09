@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace AmberArchives.Services
 {
-    public interface IAccountService
-    {
-        void RegisterUser(RegisterUserDto dto);
-        string GenerateJwt(LoginDto dto);
-
-    }
+	public interface IAccountService
+	{
+		bool Register(RegisterUserDto dto);
+		string GenerateJwt(LoginDto dto);
+		bool Update(ModifyUserDto dto);
+	}
 }

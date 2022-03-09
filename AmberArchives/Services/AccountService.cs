@@ -2,6 +2,7 @@
 using AmberArchives.Enums;
 using AmberArchives.Exceptions;
 using AmberArchives.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,38 +21,36 @@ namespace AmberArchives.Services
 		private readonly AmberArchivesDbContext _context;
 		private readonly IPasswordHasher<User> _passwordHasher;
 		private readonly AuthenticationSettings _authenticatonSettings;
+		private readonly IMapper _mapper;
 
 		public AccountService(IPasswordHasher<User> passwordHasher)
 		{
 			_passwordHasher = passwordHasher;
 		}
 
-		public AccountService(AmberArchivesDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticatonSettings)
+		public AccountService(AmberArchivesDbContext context, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticatonSettings, IMapper mapper)
 		{
 			_context = context;
 			_passwordHasher = passwordHasher;
 			_authenticatonSettings = authenticatonSettings;
+			_mapper = mapper;
 
 
 		}
-		public void RegisterUser(RegisterUserDto dto)
+		public bool Register(RegisterUserDto dto)
 		{
+			var newUser = _mapper.Map<User>(dto);
 
-			var newUser = new User()
-			{	
-				Email = dto.Email,			
-				Username = dto.Username,
-				DateOfBirth = dto.DateOfBirth,
-				PrimaryLanguage = dto.PrimaryLanguage,
-				RoleId = 3
-			};
+			newUser.RoleId = 3;
 
 			var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
 
 			newUser.PasswordHash = hashedPassword;
 			_context.Users.Add(newUser);
 			_context.SaveChanges();
-		}
+
+			return true;
+		} // RegisterUser()
 
 		public string GenerateJwt(LoginDto dto)
 		{
@@ -76,8 +75,8 @@ namespace AmberArchives.Services
 				new Claim(ClaimTypes.Name, user.Username),
 				new Claim(ClaimTypes.Role, Enum.GetName(typeof(UserRoleEnum), user.Role.RoleType)),
 				new Claim("PrimaryLanguage", Enum.GetName(typeof(LanguageEnum), user.PrimaryLanguage)),
-				new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-mm-dd")),				
-			};				
+				new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-mm-dd")),
+			};
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticatonSettings.JwtKey));
 			var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -91,6 +90,11 @@ namespace AmberArchives.Services
 
 			var tokenHandler = new JwtSecurityTokenHandler();
 			return tokenHandler.WriteToken(token);
-		}
+		} // GenerateJwt()
+
+		public bool Update(ModifyUserDto dto)
+		{
+			return true;
+		} // ModifyUser()
 	}
 }
