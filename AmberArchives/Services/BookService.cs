@@ -196,7 +196,7 @@ namespace AmberArchives.Services
 
 			if (!user)
 			{
-				_logger.LogInformation($"User with id {dto.AuthorId} does not exist. UPDATE action cancelled.");
+				_logger.LogInformation($"User with id {dto.ModUserId} does not exist. UPDATE action cancelled.");
 				throw new NotFoundException("User does not exist");
 			}
 

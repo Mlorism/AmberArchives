@@ -27,7 +27,7 @@ namespace AmberArchives.Controllers
         [AllowAnonymous]
         public ActionResult RegisterUser([FromBody] RegisterUserDto dto)
 		{
-            _accountService.RegisterUser(dto);
+            _accountService.Register(dto);
 
             return Ok();
 		}
@@ -39,5 +39,12 @@ namespace AmberArchives.Controllers
             string token = _accountService.GenerateJwt(dto);
             return Ok(token);
 		}
+
+        public ActionResult Update([FromBody] ModifyUserDto dto)
+		{
+           _accountService.Update(dto);
+            return Ok();
+		}
+
     }
 }
